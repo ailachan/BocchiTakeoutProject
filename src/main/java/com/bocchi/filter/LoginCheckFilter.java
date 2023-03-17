@@ -11,6 +11,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+
+/**
+ * 登录过滤器
+ */
 @Slf4j
 @WebFilter(urlPatterns = "/*")
 public class LoginCheckFilter implements Filter {
@@ -31,7 +35,9 @@ public class LoginCheckFilter implements Filter {
                 "/employee/logout",
                 //"/backend/js/request.js",
                 //"/backend/page/login.html",
-                "/backend/**",//此处是直接放行所有页面,因为每个页面还有部分ajax请求发给controller,一旦发送且不在白名单中就会被拦截到
+                "/backend/**",
+                //此处是直接放行所有页面,因为每个页面还有部分ajax请求发给controller没有加入此白名单,而且前端也有个拦截器需要能接到这个请求
+                //所以需要加入白名单,方便前端过滤
                 "/front/**"
         };
 
