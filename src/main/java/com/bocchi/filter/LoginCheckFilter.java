@@ -33,11 +33,10 @@ public class LoginCheckFilter implements Filter {
         String[] writeUris = new String[]{
                 "/employee/login",
                 "/employee/logout",
-                //"/backend/js/request.js",
-                //"/backend/page/login.html",
+                //request.js,此js在引入并页面加载时生效
                 "/backend/**",
-                //此处是直接放行所有页面,因为每个页面还有部分ajax请求发给controller没有加入此白名单,而且前端也有个拦截器需要能接到这个请求
-                //所以需要加入白名单,方便前端过滤
+                //此处是直接放行所有页面,因为每个页面还有部分ajax请求发给controller没有加入此白名单,可以根据这个来过滤这个页面的数据并跳转到login
+                //加入白名单,也能够让页面中引入的前端拦截器js生效,如果让页面过滤则拦截器不生效,过滤响应到的code0没人接收调转到login
                 "/front/**"
         };
 
@@ -47,16 +46,21 @@ public class LoginCheckFilter implements Filter {
         for (String writeUri : writeUris) {
             boolean match = PATH_MATHER.match(writeUri, requestURI);
             if (match){
+                log.info("{}为白名单请求被放行",request.getRequestURI());
                 filterChain.doFilter(request,response);
+                return;//过滤器链还会回来的,必须return
             }
         }
 
         //session中是否有值
         if (request.getSession().getAttribute("employeeId")!=null){
+            log.info("id为{}的用户已登录",request.getSession().getAttribute("employeeId"));
             filterChain.doFilter(request,response);
+            return;//过滤器链还会回来的,必须return
         }
 
         //给出响应由前端进行拦截调转
+        log.info("{}被拦截,未登录",request.getRequestURI());
         response.getWriter().write(JSON.toJSONString(Result.error("NOTLOGIN")));
     }
 }
