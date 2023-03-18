@@ -49,7 +49,7 @@
         localStorage.removeItem('userInfo')
         window.top.location.href = '/backend/page/login/login.html'
       } else {
-        return res.data
+        return res.data//拦截到的ajax响应中只拿data内容 res.data=Result Java对象
       }
     },
     error => {

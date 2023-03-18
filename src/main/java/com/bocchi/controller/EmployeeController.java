@@ -1,10 +1,12 @@
 package com.bocchi.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.bocchi.common.Result;
 import com.bocchi.pojo.Employee;
 import com.bocchi.service.EmployeeService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
@@ -71,6 +73,12 @@ public class EmployeeController {
         return Result.success("退出成功");
     }
 
+    /**
+     * 添加员工
+     * @param request
+     * @param employee
+     * @return
+     */
     @PostMapping
     public Result<String> insertEmployee(HttpServletRequest request,@RequestBody Employee employee){
         log.info("新增员工,员工信息：{}",employee.toString());
@@ -91,5 +99,33 @@ public class EmployeeController {
 
         //异常后此return不会返回
         return Result.success("添加成功");
+    }
+
+
+    /**
+     * 分页查询
+     * @param page
+     * @param pageSize
+     * @param name
+     * @return
+     */
+    @GetMapping("page")
+    public Result<Page<Employee>> pageQuery(int page,int pageSize,String name){//接收get ?xxx=xxx&xxx=xxx格式数据
+        log.info("page = {},pageSize = {},name = {}",page,pageSize,name);
+
+        //分页参数配置
+        Page<Employee> pageInfo = new Page<>(page,pageSize);
+
+        //是否需要分页模糊查询
+        LambdaQueryWrapper<Employee> lqw = new LambdaQueryWrapper<>();
+        lqw.like(StringUtils.isNotEmpty(name),Employee::getName,name);//为空就不添加like条件name like value
+
+        //结果排序
+        lqw.orderByDesc(Employee::getUpdateTime);//order by updateTime desc
+
+        //执行查询
+        Page<Employee> pageResult = employeeService.page(pageInfo,lqw);
+
+        return Result.success(pageResult);
     }
 }

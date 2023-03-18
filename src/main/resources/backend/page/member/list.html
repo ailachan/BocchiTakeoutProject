@@ -60,7 +60,7 @@
         ></el-table-column>
         <el-table-column label="账号状态">
           <template slot-scope="scope">
-            {{ String(scope.row.status) === '0' ? '已禁用' : '正常' }}
+            {{ String(scope.row.status) === '0' ? '已禁用' : '正常' }}<!--vue的功能实现转换-->
           </template>
         </el-table-column>
         <el-table-column
@@ -132,15 +132,15 @@
         mounted() {
         },
         methods: {
-          async init () {
+          async init () {//async这个方法是内含封装了发异步请求的方法
             const params = {
               page: this.page,
               pageSize: this.pageSize,
               name: this.input ? this.input : undefined
             }
-            await getMemberList(params).then(res => {
+            await getMemberList(params).then(res => {//await等待回调,这里的res前端拦截器已经处理过,不需要res.data.data来获取Result中的data属性
               if (String(res.code) === '1') {
-                this.tableData = res.data.records || []
+                this.tableData = res.data.records || []//相当于Result对象.data,此处的res=res.data
                 this.counts = res.data.total
               }
             }).catch(err => {
