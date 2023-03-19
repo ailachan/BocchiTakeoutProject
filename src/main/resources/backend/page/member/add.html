@@ -180,7 +180,7 @@
                     } else {
                       this.$message.error(res.msg || '操作失败')
                     }
-                  }).catch(err => {//res响应结果未正常返回时执行,返回的json是boot默认提供的错误信息
+                  }).catch(err => {//axios请求未正常发出时执行,返回的json是axios默认提供的错误信息
                     this.$message.error('请求出错了：' + err)
                   })
                 } else {

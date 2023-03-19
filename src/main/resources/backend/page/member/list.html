@@ -176,13 +176,14 @@
               'cancelButtonText': '取消',
               'type': 'warning'
               }).then(() => {
+                //查出来的显示获取到的是启用正常状态,点禁用返回与其相反的禁用状态码
               enableOrDisableEmployee({ 'id': this.id, 'status': !this.status ? 1 : 0 }).then(res => {
                 console.log('enableOrDisableEmployee',res)
                 if (String(res.code) === '1') {
                   this.$message.success('账号状态更改成功！')
                   this.handleQuery()
                 }
-              }).catch(err => {
+              }).catch(err => {//如果后端代码没问题只是请求地址no mapping则为axios内部抛出json格式的异常
                 this.$message.error('请求出错了：' + err)
               })
             })
