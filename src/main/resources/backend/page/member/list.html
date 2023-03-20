@@ -156,11 +156,11 @@
             if (st === 'add'){
               window.parent.menuHandle({
                 id: '2',
-                url: '/backend/page/member/add.html',
+                url: '/backend/page/member/add.html',//修改iframe页面
                 name: '添加员工'
               },true)
             } else {
-              window.parent.menuHandle({
+              window.parent.menuHandle({//修改iframe页面
                 id: '2',
                 url: '/backend/page/member/add.html?id='+st,
                 name: '修改员工'

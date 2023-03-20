@@ -18,7 +18,7 @@ import java.sql.SQLIntegrityConstraintViolationException;
 public class GlobalExceptionHandler {
 
     /**
-     * 捕获发生此异常的方法,并执行此通知Advice
+     * 捕获发生此异常的方法,并执行此通知Advice,以后遇到此异常前端起码不会去执行catch中的代码
      *
      * @return
      */
@@ -32,6 +32,6 @@ public class GlobalExceptionHandler {
             return Result.error(duplicateUsername.substring(1, duplicateUsername.length() - 1) + "已存在");
         }
 
-        return Result.error("未知错误");
+        return Result.error("其他未知违反约束错误");
     }
 }

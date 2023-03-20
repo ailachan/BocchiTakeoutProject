@@ -177,12 +177,12 @@
           async init () {
             await getCategoryPage({'page': this.page, 'pageSize': this.pageSize}).then(res => {
               if (String(res.code) === '1') {
-                this.tableData = res.data.records
+                this.tableData = res.data.records//page对象中的records属性
                 this.counts = Number(res.data.total)
               } else {
                 this.$message.error(res.msg || '操作失败')
               }
-            }).catch(err => {
+            }).catch(err => {//err信息由axios提供
               this.$message.error('请求出错了：' + err)
             })
           },

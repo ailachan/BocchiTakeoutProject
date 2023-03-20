@@ -131,17 +131,17 @@
           }
         },
         created() {
-          this.id = requestUrlParam('id')
+          this.id = requestUrlParam('id')//iframe跳到该页面时用此方法获取url上的参数
           this.actionType = this.id ? 'edit' : 'add'
           if (this.id) {
-            this.init()
+            this.init()//如果有带id则说明需要init回显数据
           }
         },
         mounted() {
         },
         methods: {
           async init () {
-            queryEmployeeById(this.id).then(res => {
+            queryEmployeeById(this.id).then(res => {//跳到该iframe带id时执行
               console.log(res)
               if (String(res.code) === '1') {
                 console.log(res.data)

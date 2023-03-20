@@ -1,6 +1,7 @@
 package com.bocchi.filter;
 
 import com.alibaba.fastjson.JSON;
+import com.bocchi.common.BaseContext;
 import com.bocchi.common.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.AntPathMatcher;
@@ -23,6 +24,8 @@ public class LoginCheckFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+        log.info(String.valueOf(Thread.currentThread().getId()));
+
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
 
@@ -55,6 +58,7 @@ public class LoginCheckFilter implements Filter {
         //session中是否有值
         if (request.getSession().getAttribute("employeeId")!=null){
             log.info("id为{}的用户已登录",request.getSession().getAttribute("employeeId"));
+            BaseContext.setCurrentId((Long) request.getSession().getAttribute("employeeId"));//存入session到本次请求的ThreadLocal中
             filterChain.doFilter(request,response);
             return;//过滤器链还会回来的,必须return
         }

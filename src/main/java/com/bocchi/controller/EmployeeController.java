@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 
+/**
+ * 员工管理
+ */
 @Slf4j
 @RestController
 @RequestMapping("/employee")
@@ -82,18 +85,19 @@ public class EmployeeController {
     @PostMapping
     public Result<String> insertEmployee(HttpServletRequest request,@RequestBody Employee employee){
         log.info("新增员工,员工信息：{}",employee.toString());
+        log.info(String.valueOf(Thread.currentThread().getId()));
 
         //设定初始密码并md5加密存储
         employee.setPassword(DigestUtils.md5DigestAsHex("123456".getBytes()));
 
         //1.8新时间类生成当前系统时间作为创建日期和更新日期
-        employee.setCreateTime(LocalDateTime.now());
-        employee.setUpdateTime(LocalDateTime.now());
+/*        employee.setCreateTime(LocalDateTime.now());
+        employee.setUpdateTime(LocalDateTime.now());*/
 
         //设置创建和更新人
-        Long currentLoginAccount = (Long) request.getSession().getAttribute("employeeId");
+/*        Long currentLoginAccount = (Long) request.getSession().getAttribute("employeeId");
         employee.setCreateUser(currentLoginAccount);
-        employee.setUpdateUser(currentLoginAccount);
+        employee.setUpdateUser(currentLoginAccount);*/
 
         employeeService.save(employee);
 
@@ -139,10 +143,27 @@ public class EmployeeController {
     public Result<String> updateEmployee(HttpServletRequest request,@RequestBody Employee employee){
         log.info(employee.toString());
 
-        employee.setUpdateUser((Long) request.getSession().getAttribute("employeeId"));
-        employee.setUpdateTime(LocalDateTime.now());
+/*        employee.setUpdateUser((Long) request.getSession().getAttribute("employeeId"));
+        employee.setUpdateTime(LocalDateTime.now());*/
         employeeService.updateById(employee);
 
         return Result.success("更新成功");
+    }
+
+    /**
+     * 根据id查询员工信息,员工信息有些前端并没有在列表中一行显示出来,不能用vue的获取当前行数据来回显,要回显没有显示的数据得查一遍数据库
+     * @param id
+     * @return
+     */
+    @GetMapping("{id}")
+    public Result<Employee> queryById(@PathVariable Long id){
+        log.info(String.valueOf(employeeService.getById(id)));
+
+        Employee employee = employeeService.getById(id);
+
+        if (employee != null){
+            return Result.success(employee);
+        }
+        return Result.error("未查询到员工");
     }
 }

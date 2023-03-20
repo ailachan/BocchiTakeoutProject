@@ -26,14 +26,16 @@ public class Employee {
 
     private Integer status;
 
+    @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createTime;
 
+    @TableField(fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime updateTime;
 
-    @TableField(fill = FieldFill.INSERT)
+    @TableField(fill = FieldFill.INSERT)//公共字段自动在插入操作时自动填充
     private Long createUser;
 
-    @TableField(fill = FieldFill.INSERT_UPDATE)
+    @TableField(fill = FieldFill.INSERT_UPDATE)//公共字段自动在插入更新操作时自动填充
     private Long updateUser;
 
 }
