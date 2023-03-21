@@ -4,4 +4,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.bocchi.pojo.Category;
 
 public interface CategoryService extends IService<Category> {
+    boolean removeCategory(Long id);
 }

@@ -34,4 +34,16 @@ public class GlobalExceptionHandler {
 
         return Result.error("其他未知违反约束错误");
     }
+
+    /**
+     * 捕获发生此异常的方法,并执行此通知Advice,以后遇到此异常前端起码不会去执行catch中的代码
+     *
+     * @return
+     */
+    @ExceptionHandler(RemoveException.class)//捕获自定义删除异常错误
+    public Result<String> RemoveExceptionHandler(RemoveException e) {
+        log.info("异常Advice捕获"+e.getMessage());
+
+        return Result.error(e.getMessage());
+    }
 }

@@ -53,4 +53,16 @@ public class CategoryController {
 
         return Result.success(pageResult);
     }
+
+    /**
+     * 删除分类
+     * @param ids
+     * @return
+     */
+    @DeleteMapping
+    public Result<String> deleteById(Long ids){
+        categoryService.removeCategory(ids);
+
+        return Result.success("删除成功");
+    }
 }
