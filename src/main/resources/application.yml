@@ -15,3 +15,6 @@ mybatis-plus:
   global-config:
     db-config:
       id-type: ASSIGN_ID
+
+fileSavePath: #自定义属性值,springboot加载此配置时会放入容器中,可用Value注解来使用
+    path: D:\dir\

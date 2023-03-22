@@ -40,7 +40,9 @@ public class LoginCheckFilter implements Filter {
                 "/backend/**",
                 //此处是直接放行所有页面,因为每个页面还有部分ajax请求发给controller没有加入此白名单,可以根据这个来过滤这个页面的数据并跳转到login
                 //加入白名单,也能够让页面中引入的前端拦截器js生效,如果让页面过滤则拦截器不生效,过滤响应到的code0没人接收调转到login
-                "/front/**"
+                "/front/**",
+                "/file/upload",//TODO 过滤器放行文件上传请求
+                "/file/download"//TODO 过滤器放行文件下载请求
         };
 
         log.info("本次请求的uri：{}", request.getRequestURI());

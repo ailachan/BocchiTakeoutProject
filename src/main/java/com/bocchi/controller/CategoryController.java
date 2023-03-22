@@ -65,4 +65,18 @@ public class CategoryController {
 
         return Result.success("删除成功");
     }
+
+
+    /**
+     * 更新分类
+     * @param category
+     * @return
+     */
+    @PutMapping
+    public Result<String> updateById(@RequestBody Category category){
+
+        categoryService.updateById(category);
+
+        return Result.success("更新成功");
+    }
 }
