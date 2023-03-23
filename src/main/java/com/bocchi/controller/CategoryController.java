@@ -4,10 +4,13 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.bocchi.common.Result;
 import com.bocchi.pojo.Category;
+import com.bocchi.pojo.DishFlavor;
 import com.bocchi.service.CategoryService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * 分类管理
@@ -79,4 +82,22 @@ public class CategoryController {
 
         return Result.success("更新成功");
     }
+
+
+    /**
+     * 按type获取分类下拉列表
+     * @param category
+     * @return
+     */
+    @GetMapping("/list")
+    public Result<List<Category>> CategoryListQuery(Category category){
+        LambdaQueryWrapper<Category> lqw = new LambdaQueryWrapper<>();
+        lqw.eq(category.getType()!=null,Category::getType,category.getType());//按类型查询是套餐还是菜品
+        lqw.orderByDesc(Category::getSort,Category::getUpdateTime);
+
+        List<Category> list = categoryService.list(lqw);
+
+        return Result.success(list);
+    }
+
 }

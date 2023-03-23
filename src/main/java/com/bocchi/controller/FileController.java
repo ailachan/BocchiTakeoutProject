@@ -75,7 +75,7 @@ public class FileController {
         }
         finally {
             if (fis != null){
-                try {
+                try  {
                     fis.close();
                 } catch (IOException e) {
                     e.printStackTrace();
