@@ -28,7 +28,7 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
      * 添加菜品及对应口味信息
      * @param dish
      */
-    @Transactional//涉及多表操作需开启事务,要么都成功要么都回退
+    @Transactional//涉及多表操作需开启事务,俩个表的service的save方法要么都成功要么都回退(比如第一个save方法执行成功,下面另一个save方法发生异常,开启事务后就会一起回退)
     public void insertDishAndFlavor(DishDto dish){
         //用当前类中的方法添加菜品信息,表中不包含的flavors会默认忽略
         this.save(dish);

@@ -28,6 +28,7 @@ public class Dish{
 
 
     //菜品价格
+    //涉及金额需要用BigDecimal且传过来的数尽量转成整数(当前项目是×100即可),进行加减乘除运算时会更加精确
     private BigDecimal price;
 
 
