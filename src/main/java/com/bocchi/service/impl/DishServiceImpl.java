@@ -1,15 +1,14 @@
 package com.bocchi.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.bocchi.mapper.DishMapper;
-import com.bocchi.mapper.SetmealMapper;
 import com.bocchi.pojo.Dish;
 import com.bocchi.pojo.DishDto;
 import com.bocchi.pojo.DishFlavor;
-import com.bocchi.pojo.Setmeal;
 import com.bocchi.service.DishFlavorService;
 import com.bocchi.service.DishService;
-import com.bocchi.service.SetmealService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,5 +51,26 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
         //批量添加
         dishFlavorService.saveBatch(flavors);
 
+    }
+
+    @Override
+    public DishDto selectDishAndFlavorById(Long id) {
+        //获取当前菜品信息,不包含口味
+        Dish dish = this.getById(id);
+
+        //根据菜品id查询当前菜品的口味信息
+        LambdaQueryWrapper<DishFlavor> lqw = new LambdaQueryWrapper<>();
+        lqw.eq(DishFlavor::getDishId,dish.getId());
+
+        List<DishFlavor> dishFlavorList = dishFlavorService.list(lqw);
+
+        DishDto dishDto = new DishDto();
+
+        //拷贝不包含口味的菜品信息
+        BeanUtils.copyProperties(dish,dishDto);
+        //设置口味信息
+        dishDto.setFlavors(dishFlavorList);
+
+        return dishDto;
     }
 }
