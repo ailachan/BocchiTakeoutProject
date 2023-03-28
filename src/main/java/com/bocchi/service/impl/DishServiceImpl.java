@@ -27,6 +27,7 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
      * 添加菜品及对应口味信息
      * @param dish
      */
+    @Override
     @Transactional//涉及多表操作需开启事务,俩个表的service的save方法要么都成功要么都回退(比如第一个save方法执行成功,下面另一个save方法发生异常,开启事务后就会一起回退)
     public void insertDishAndFlavor(DishDto dish){
         //用当前类中的方法添加菜品信息,表中不包含的flavors会默认忽略
@@ -72,5 +73,34 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
         dishDto.setFlavors(dishFlavorList);
 
         return dishDto;
+    }
+
+    /**
+     * 更新菜品及喜好信息
+     * @param dish
+     */
+    @Override
+    @Transactional
+    public void updateDishAndFlavor(DishDto dish) {
+        //更新菜品信息
+        this.updateById(dish);
+
+        LambdaQueryWrapper<DishFlavor> lqw = new LambdaQueryWrapper<>();
+        lqw.eq(DishFlavor::getDishId,dish.getId());
+
+        //删除原有的flavor
+        dishFlavorService.remove(lqw);
+
+        //更新操作可以不做setDishId,flavors中已包含,新增时是因为前端传过来之前还未生成id
+        List<DishFlavor> dishFlavors = dish.getFlavors().stream().map(new Function<DishFlavor, DishFlavor>() {
+            @Override
+            public DishFlavor apply(DishFlavor dishFlavor) {
+                dishFlavor.setDishId(dish.getId());
+                return dishFlavor;
+            }
+        }).collect(Collectors.toList());
+
+        //批量更新flavor表
+        dishFlavorService.saveBatch(dishFlavors);
     }
 }

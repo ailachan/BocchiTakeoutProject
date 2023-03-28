@@ -101,4 +101,31 @@ public class DishController {
 
         return Result.success(dishDto);
     }
+
+    /**
+     * 修改菜品及喜好信息
+     * @param dish
+     * @return
+     */
+    @PutMapping
+    public Result<String> updateDish(@RequestBody DishDto dish) {
+        log.info(dish.toString());
+
+        dishService.updateDishAndFlavor(dish);
+
+        return Result.success("更新成功");
+    }
+
+    @GetMapping("list")
+    public Result<List<Dish>> dishCategoryList(Dish dish){
+        LambdaQueryWrapper<Dish> lqw = new LambdaQueryWrapper<>();
+        //设置按分类id查询菜品集合
+        lqw.eq(dish.getCategoryId() != null,Dish::getCategoryId,dish.getCategoryId());
+        lqw.eq(Dish::getStatus,1);
+        lqw.orderByDesc(Dish::getSort).orderByDesc(Dish::getUpdateTime);
+
+        List<Dish> dishList = dishService.list(lqw);
+
+        return Result.success(dishList);
+    }
 }
