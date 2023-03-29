@@ -1,6 +1,8 @@
 package com.bocchi.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.bocchi.common.RemoveException;
 import com.bocchi.mapper.SetmealMapper;
 import com.bocchi.pojo.Setmeal;
 import com.bocchi.pojo.SetmealDish;
@@ -41,5 +43,35 @@ public class SetmealServiceImpl extends ServiceImpl<SetmealMapper, Setmeal> impl
         }).collect(Collectors.toList());
 
         setmealDishService.saveBatch(setmealDishes);
+    }
+
+
+    /**
+     * 删除套餐及对应的菜品
+     * @param ids
+     */
+    @Override
+    @Transactional
+    public void deleteSetMealAndSelecedDishs(List<Long> ids) {
+        //根据套餐id及套餐状态字段,查询ids中是否有处于售卖状态的套餐
+        LambdaQueryWrapper<Setmeal> lqw = new LambdaQueryWrapper<>();
+        lqw.eq(Setmeal::getStatus,1);
+        lqw.in(Setmeal::getId,ids);
+
+        int count = this.count(lqw);
+
+        //有则抛出异常
+        if (count > 0){
+            throw new RemoveException("套餐处于在售状态,不可删除");
+        }
+
+        //没有则删除套餐信息
+        this.removeByIds(ids);
+
+        //删除套餐对应的菜品信息,注意ids里存的是setmeal表的主键Id,是按setMealDish的外键id(setMeal的主键Id)删,而不是按SetmealDish这个关联表的主键id删
+        LambdaQueryWrapper<SetmealDish> lqw2 = new LambdaQueryWrapper<>();
+        lqw2.in(SetmealDish::getSetmealId,ids);
+
+        setmealDishService.remove(lqw2);
     }
 }

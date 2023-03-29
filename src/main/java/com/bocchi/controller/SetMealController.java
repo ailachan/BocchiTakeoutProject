@@ -85,4 +85,20 @@ public class SetMealController {
 
         return Result.success(setmealDtoPageInfo);
     }
+
+
+    /**
+     * 删除套餐及关联表的菜品
+     * @param ids
+     * @return
+     */
+    @DeleteMapping
+    //多个逗号分割的参数会自动转为一个List集合接收,@RequestParam表示作为作为集合中的参数add而不是List这个对象中的属性来接收
+    public Result<String> deleteSetMealAndSelectedDishs(@RequestParam List<Long> ids){
+        log.info(ids.toString());
+
+        setmealService.deleteSetMealAndSelecedDishs(ids);
+
+        return Result.success("删除成功");
+    }
 }
