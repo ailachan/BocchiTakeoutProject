@@ -81,7 +81,7 @@
                             '无','公司','家','学校'
                         ],
                         id:undefined,
-                        activeIndex :0
+                        activeIndex :0//默认label为无(index=0)
                     }
                 },
                 computed:{},
@@ -102,6 +102,7 @@
                             const res = await addressFindOneApi(params.id)
                             if(res.code === 1){
                                 this.form = res.data
+                                this.activeIndex = this.labelList.indexOf(this.form.label)//更新label活跃索引
                             }else{
                                 this.$notify({ type:'warning', message:res.msg});
                             }

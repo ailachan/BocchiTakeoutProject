@@ -7,9 +7,6 @@ spring:
       url: jdbc:mysql://localhost:3306/bocchi?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
       username: root
       password: 123456
-# 多环境切换
-#  profiles:
-#    active: dev
 mybatis-plus:
   configuration:
     #在映射实体或者属性时，将数据库中表名和字段名中的下划线去掉，按照驼峰命名法映射
@@ -20,4 +17,4 @@ mybatis-plus:
       id-type: ASSIGN_ID
 
 fileSavePath: #自定义属性值,springboot加载此配置时会放入容器中,可用Value注解来使用
-    path: D:\dir\
+  path: D:\dir\

@@ -42,7 +42,10 @@ public class LoginCheckFilter implements Filter {
                 //加入白名单,也能够让页面中引入的前端拦截器js生效,如果让页面过滤则拦截器不生效,过滤响应到的code0没人接收调转到login
                 "/front/**",
                 "/file/upload",//TODO 过滤器放行文件上传请求
-                "/file/download"//TODO 过滤器放行文件下载请求
+                "/file/download",//TODO 过滤器放行文件下载请求
+                //放行前台用户登录
+                "/user/sendMsg",
+                "/user/login"
         };
 
         log.info("本次请求的uri：{}", request.getRequestURI());
@@ -57,10 +60,18 @@ public class LoginCheckFilter implements Filter {
             }
         }
 
-        //session中是否有值
+        //判断employee是否登录
         if (request.getSession().getAttribute("employeeId")!=null){
-            log.info("id为{}的用户已登录",request.getSession().getAttribute("employeeId"));
-            BaseContext.setCurrentId((Long) request.getSession().getAttribute("employeeId"));//存入session到本次请求的ThreadLocal中
+            log.info("id为{}的employee已登录",request.getSession().getAttribute("employeeId"));
+            BaseContext.setCurrentId((Long) request.getSession().getAttribute("employeeId"));//存入employee到本次请求的ThreadLocal中,便于元数据自动填充
+            filterChain.doFilter(request,response);
+            return;//过滤器链还会回来的,必须return
+        }
+
+        //判断user是否登录
+        if (request.getSession().getAttribute("userId")!=null){
+            log.info("id为{}的user已登录",request.getSession().getAttribute("userId"));
+            BaseContext.setCurrentId((Long) request.getSession().getAttribute("userId"));//存入user到本次请求的ThreadLocal中,便于元数据自动填充
             filterChain.doFilter(request,response);
             return;//过滤器链还会回来的,必须return
         }

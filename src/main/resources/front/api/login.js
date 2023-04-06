@@ -6,6 +6,15 @@ function loginApi(data) {
     })
   }
 
+function sendMsgApi(data) {//发送获取验证码的请求
+    return $axios({
+        'url': '/user/sendMsg',
+        'method': 'post',
+        data
+    })
+}
+
+
 function loginoutApi() {
   return $axios({
     'url': '/user/loginout',
