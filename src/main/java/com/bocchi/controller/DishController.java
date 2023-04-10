@@ -6,7 +6,9 @@ import com.bocchi.common.Result;
 import com.bocchi.pojo.Category;
 import com.bocchi.pojo.Dish;
 import com.bocchi.pojo.DishDto;
+import com.bocchi.pojo.DishFlavor;
 import com.bocchi.service.CategoryService;
+import com.bocchi.service.DishFlavorService;
 import com.bocchi.service.DishService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -28,6 +30,9 @@ public class DishController {
     @Autowired
     private CategoryService categoryService;
 
+
+    @Autowired
+    private DishFlavorService dishFlavorService;
     /**
      * 添加菜品及对应口味信息
      *
@@ -116,8 +121,13 @@ public class DishController {
         return Result.success("更新成功");
     }
 
+    /**
+     * 查询菜品分类
+     * @param dish
+     * @return
+     */
     @GetMapping("list")
-    public Result<List<Dish>> dishCategoryList(Dish dish){
+    public Result<List<DishDto>> dishCategoryList(Dish dish){
         LambdaQueryWrapper<Dish> lqw = new LambdaQueryWrapper<>();
         //设置按分类id查询菜品集合
         lqw.eq(dish.getCategoryId() != null,Dish::getCategoryId,dish.getCategoryId());
@@ -126,6 +136,34 @@ public class DishController {
 
         List<Dish> dishList = dishService.list(lqw);
 
-        return Result.success(dishList);
+        //查到Name映射到扩展DishDto中
+        List<DishDto> dishDtoList = dishList.stream().map(new Function<Dish, DishDto>() {
+            @Override
+            public DishDto apply(Dish dish) {
+                DishDto dishDto = new DishDto();
+                //获取每一个菜品的分类id
+                Long categoryId = dish.getCategoryId();
+                //根据分类id查询对应的分类
+                Category category = categoryService.getById(categoryId);
+                if (category != null) {
+                    //获取name
+                    String categoryName = category.getName();
+                    //写入Name到扩展类DishDto
+                    dishDto.setCategoryName(categoryName);
+                }
+                //拷贝原始类Dish信息到扩展类DishDto中
+
+                LambdaQueryWrapper<DishFlavor> lqw = new LambdaQueryWrapper<>();
+                lqw.eq(DishFlavor::getDishId,dish.getId());
+                List<DishFlavor> flavors = dishFlavorService.list(lqw);
+
+                dishDto.setFlavors(flavors);
+
+                BeanUtils.copyProperties(dish, dishDto);
+                return dishDto;
+            }
+        }).collect(Collectors.toList());
+
+        return Result.success(dishDtoList);
     }
 }

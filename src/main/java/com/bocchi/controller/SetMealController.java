@@ -1,5 +1,6 @@
 package com.bocchi.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.bocchi.common.Result;
@@ -100,5 +101,24 @@ public class SetMealController {
         setmealService.deleteSetMealAndSelecedDishs(ids);
 
         return Result.success("删除成功");
+    }
+
+
+    /**
+     * 查询套餐
+     * @param setmeal
+     * @return
+     */
+    @GetMapping("list")
+    public Result<List<Setmeal>> setMealList(Setmeal setmeal){
+        Long categoryId = setmeal.getCategoryId();
+        Integer status = setmeal.getStatus();
+
+        LambdaQueryWrapper<Setmeal> lqw = new LambdaQueryWrapper<>();
+        lqw.eq(categoryId != null,Setmeal::getCategoryId,categoryId);
+        lqw.eq(status != null,Setmeal::getStatus,status);
+        List<Setmeal> setmealList = setmealService.list(lqw);
+
+        return Result.success(setmealList);
     }
 }
