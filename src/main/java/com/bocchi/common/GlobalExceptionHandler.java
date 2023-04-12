@@ -46,4 +46,11 @@ public class GlobalExceptionHandler {
 
         return Result.error(e.getMessage());
     }
+
+    @ExceptionHandler(OtherException.class)//捕获自定义其他异常错误
+    public Result<String> OtherExceptionHandler(OtherException e) {
+        log.info("异常Advice捕获"+e.getMessage());
+
+        return Result.error(e.getMessage());
+    }
 }
